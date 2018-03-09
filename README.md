@@ -1,52 +1,69 @@
-# MailruTarget
+# Ruby client for myTarget API
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'mailru_target'
+```
+gem 'my_target_api', '~> 1.0.0'
+```
 
 And then execute:
 
-    $ bundle
+```
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install mailru_target
+```
+$ gem install my_target_api
+```
 
 ## Usage
 
-    MailruTarget.client_id = YOUR_CLIENT_ID
-    MailruTarget.client_secret = YOUR_CLIENT_SECRET_KEY
+```ruby
+# initialization
+api = MyTargetApi.new(app_id, app_secret, token)
 
-Get authorize url and redirect user to it.
+# get api object
+campaigns_api = api.resource('campaigns')
+remarketing_api = api.resource('remarketing', v: 2)
+remarketing_counters_api = remarketing_api.resource('counters')
 
-    MailruTarget::Auth.authorize_url
+# create
+remarketing_counters_api.create(counter_id: 121212) # => [{ id: 343434 }]
 
-Recieve authentication code and request token:
+# read all
+campaigns_api.read # => [{ id: 12345, ... }, { ... }]
 
-    MailruTarget::Auth.get_token code
-    => {"access_token" => "xxx", "token_type" => "Bearer", "expires_in" => 86400, "refresh_token" => "xxx"}
+# read
+campaigns_api.read(id: 12345) # => [{ id: 12345, ... }]
 
-Use refresh_token to update current token after it expires
+# update
+campaigns_api.update(id: 12345, status: 'blocked') # => [{ id: 12345, status: 'blocked' }]
 
-    MailruTarget::Auth.refresh_token code
-    => {"access_token" => "xxx", "token_type" => "Bearer", "expires_in" => 86400, "refresh_token" => "xxx"}
+# delete
+remarketing_counters_api.delete(id: 343434) # => true
+```
 
-Initialize new session and request restful resources:
+## Exceptions
 
-    session = MailruTarget::Session.new(token)
-    session.request :get, "/campaigns", status: "active"
+```ruby
+def read_active_campaigns
+  campaigns_api.read(status: 'active')
+rescue MyTargetApi::RequestError, MyTargetApi::ConnectionError => e
+  logger.error(e)
+  raise
+end
+```
 
-Request with 'sudo' mode:
+## Testing
 
-    session = MailruTarget::Session.new(token)
-    session.request :get, "/campaigns", { as_user: "xxxxxxx@agency_client", status: "active" }
+```
+bundle exec rspec
+```
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/mailru_target/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+Create a pull-request or make an issue
