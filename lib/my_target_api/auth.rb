@@ -2,18 +2,18 @@
 
 # see https://target.my.com/doc/api/oauth2
 
-module MailruTarget
+module MyTargetApi
   # authorization
   class Auth
 
     class << self
 
-      include MailruTarget::Request
+      include MyTargetApi::Request
 
       def authorize_url
         state = (0...32).map { (65 + rand(26)).chr }.join.downcase
         'https://target.my.com/oauth2/authorize?response_type=code' \
-          "&client_id=#{MailruTarget.client_id}&state=#{state}&scope=#{MailruTarget.scopes}"
+          "&client_id=#{MyTargetApi.client_id}&state=#{state}&scope=#{MyTargetApi.scopes}"
       end
 
       # We need new method to receive token using `agency_client_credentials` grant type

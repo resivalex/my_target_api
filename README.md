@@ -1,10 +1,10 @@
-# MailruTarget
+# MyTargetApi
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'mailru_target'
+    gem 'my_target_api'
 
 And then execute:
 
@@ -12,35 +12,35 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install mailru_target
+    $ gem install my_target_api
 
 ## Usage
 
-    MailruTarget.client_id = YOUR_CLIENT_ID
-    MailruTarget.client_secret = YOUR_CLIENT_SECRET_KEY
+    MyTargetApi.client_id = YOUR_CLIENT_ID
+    MyTargetApi.client_secret = YOUR_CLIENT_SECRET_KEY
 
 Get authorize url and redirect user to it.
 
-    MailruTarget::Auth.authorize_url
+    MyTargetApi::Auth.authorize_url
 
 Recieve authentication code and request token:
 
-    MailruTarget::Auth.get_token code
+    MyTargetApi::Auth.get_token code
     => {"access_token" => "xxx", "token_type" => "Bearer", "expires_in" => 86400, "refresh_token" => "xxx"}
 
 Use refresh_token to update current token after it expires
 
-    MailruTarget::Auth.refresh_token code
+    MyTargetApi::Auth.refresh_token code
     => {"access_token" => "xxx", "token_type" => "Bearer", "expires_in" => 86400, "refresh_token" => "xxx"}
 
 Initialize new session and request restful resources:
 
-    session = MailruTarget::Session.new(token)
+    session = MyTargetApi::Session.new(token)
     session.request :get, "/campaigns", status: "active"
 
 Request with 'sudo' mode:
 
-    session = MailruTarget::Session.new(token)
+    session = MyTargetApi::Session.new(token)
     session.request :get, "/campaigns", { as_user: "xxxxxxx@agency_client", status: "active" }
 
 ## Contributing
