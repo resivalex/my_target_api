@@ -15,6 +15,7 @@ module MyTargetApi
       result
     end
 
+    # changes
     def make_request(method, path, params = {}, headers = {})
 
       exec_params = compact(build(method, path, params, headers).merge(log: MyTargetApi.logger))
