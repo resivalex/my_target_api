@@ -3,17 +3,17 @@
 
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'mailru_target/version'
+require 'my_target_api/version'
 
 Gem::Specification.new do |spec|
 
-  spec.name          = 'mailru_target'
+  spec.name          = 'my_target_api'
   spec.version       = MailruTarget::VERSION
   spec.authors       = ['Eugeniy Belyaev']
   spec.email         = ['eugeniy.b@garin-studio.ru']
   spec.summary       = 'Target.Mail.ru api via oauth2'
   spec.description   = 'Target.Mail.ru api via oauth2'
-  spec.homepage      = 'https://github.com/zhekanax/mailru_target'
+  spec.homepage      = 'https://github.com/zhekanax/my_target_api'
   spec.license       = 'MIT'
 
   spec.files         = Dir['**/*']

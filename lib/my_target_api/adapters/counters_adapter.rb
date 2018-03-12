@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Counters API methods for TM
-module MailruTarget
+module MyTargetApi
   # adapters for couners
   module CountersAdapter
 

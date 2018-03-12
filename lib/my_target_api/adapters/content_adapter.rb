@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Content API methods for TM
-module MailruTarget
+module MyTargetApi
   # adapters for images and videos
   module ContentAdapter
 

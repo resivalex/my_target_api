@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # TM request object
-module MailruTarget
+module MyTargetApi
   # requests
   module Request
 
@@ -17,21 +17,28 @@ module MailruTarget
 
     def make_request(method, path, params = {}, headers = {})
 
-      exec_params = build(method, path, params, headers).merge(log: MailruTarget.logger).compact
+      exec_params = compact(build(method, path, params, headers).merge(log: MyTargetApi.logger))
       response = RestClient::Request.execute(exec_params)
-      MailruTarget.logger << response if MailruTarget.logger
+      MyTargetApi.logger << response if MyTargetApi.logger
       response
     rescue RestClient::Unauthorized, RestClient::Forbidden,
            RestClient::BadRequest, RestClient::RequestFailed,
            RestClient::ResourceNotFound => e
 
       log_rest_client_exception(e)
-      raise MailruTarget::RequestError, e
+      raise MyTargetApi::RequestError, e
     rescue SocketError => e
-      raise MailruTarget::ConnectionError, e
+      raise MyTargetApi::ConnectionError, e
     end
 
     private
+
+    def compact(hash)
+      hash.map do |key, value|
+        next nil if value.nil?
+        [key, value]
+      end.compact.to_h
+    end
 
     def log_rest_client_exception(exception)
       log_message =
@@ -44,7 +51,7 @@ module MailruTarget
           HTTP headers: #{exception.http_headers}
         LOG
 
-      MailruTarget.logger << log_message if MailruTarget.logger
+      MyTargetApi.logger << log_message if MyTargetApi.logger
     end
 
     def build(method, path, params, headers)
@@ -74,7 +81,7 @@ module MailruTarget
     end
 
     def client_id_and_secret
-      { client_id: MailruTarget.client_id, client_secret: MailruTarget.client_secret }
+      { client_id: MyTargetApi.client_id, client_secret: MyTargetApi.client_secret }
     end
 
     def get_request(path, params, headers)

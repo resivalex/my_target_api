@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module MailruTarget
+module MyTargetApi
   # adapters for images
   module ImagesAdapter
 

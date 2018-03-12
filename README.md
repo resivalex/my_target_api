@@ -26,6 +26,7 @@ $ gem install my_target_api
 # initialization
 api = MyTargetApi.new(app_id, app_secret, token)
 
+
 # get api object
 campaigns_api = api.resource('campaigns')
 remarketing_api = api.resource('remarketing', v: 2)
