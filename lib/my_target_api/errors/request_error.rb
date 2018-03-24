@@ -17,7 +17,7 @@ module MyTargetApi
       else
         body.map { |field, error| "#{field}: #{error}" }.join(', ')
       end
-    rescue
+    rescue StandardError
       e.response
     end
 

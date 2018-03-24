@@ -11,7 +11,7 @@ module MyTargetApi
       include MyTargetApi::Request
 
       def authorize_url
-        state = (0...32).map { (65 + rand(26)).chr }.join.downcase
+        state = (0...32).map { rand(65..90).chr }.join.downcase
         'https://target.my.com/oauth2/authorize?response_type=code' \
           "&client_id=#{MyTargetApi.client_id}&state=#{state}&scope=#{MyTargetApi.scopes}"
       end
