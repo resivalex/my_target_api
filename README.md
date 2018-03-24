@@ -1,6 +1,6 @@
 # Ruby client for myTarget API
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/336e2771be007405e444/maintainability)](https://codeclimate.com/github/home2018/my_target_api/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/336e2771be007405e444/maintainability)](https://codeclimate.com/github/home2018/my_target_api/maintainability) [![Build Status](https://travis-ci.org/home2018/my_target_api.svg?branch=develop)](https://travis-ci.org/home2018/my_target_api)
 
 ## Installation
 
