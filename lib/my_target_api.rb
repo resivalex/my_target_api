@@ -33,7 +33,8 @@ module MyTargetApi
 
   class << self
 
-    attr_accessor :client_id, :client_secret, :scopes, :logger
+    attr_accessor :client_id, :client_secret, :logger
+    attr_writer :scopes
 
     def scopes
       @scopes || 'read_ads,read_payments,create_ads'
