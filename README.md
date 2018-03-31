@@ -1,6 +1,6 @@
-# Ruby client for myTarget API
+[![Build Status](https://travis-ci.org/resivalex/my_target_api.svg?branch=develop)](https://travis-ci.org/resivalex/my_target_api) [![Maintainability](https://api.codeclimate.com/v1/badges/2d7c92e0524f7ee1612f/maintainability)](https://codeclimate.com/github/resivalex/my_target_api/maintainability)
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/336e2771be007405e444/maintainability)](https://codeclimate.com/github/home2018/my_target_api/maintainability) [![Build Status](https://travis-ci.org/home2018/my_target_api.svg?branch=develop)](https://travis-ci.org/home2018/my_target_api)
+# Ruby client for myTarget API
 
 ## Installation
 
