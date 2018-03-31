@@ -7,16 +7,16 @@ require 'my_target_api/version'
 Gem::Specification.new do |spec|
   spec.name          = 'my_target_api'
   spec.version       = MyTargetApi::VERSION
-  spec.authors       = ['Eugeniy Belyaev']
-  spec.email         = ['eugeniy.b@garin-studio.ru']
-  spec.summary       = 'Target.Mail.ru api via oauth2'
-  spec.description   = 'Target.Mail.ru api via oauth2'
-  spec.homepage      = 'https://github.com/zhekanax/my_target_api'
+  spec.authors       = ['Reshetnikov Ivan']
+  spec.email         = ['help@oneretarget.com']
+  spec.summary       = 'Ruby client for myTarget API'
+  spec.description   = 'This library was created by OneRetarget.com - advertising automation service'
+  spec.homepage      = 'https://github.com/resivalex/my_target_api'
   spec.license       = 'MIT'
 
   spec.files         = Dir['**/*']
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ['lib']
 
   spec.add_dependency 'json'
