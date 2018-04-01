@@ -32,11 +32,11 @@ describe MyTargetApi::Request do
 
     it 'deletes object' do
       stub_request(:delete, 'https://target.my.com/api/v1/remarketing_context_phrases/53.json')
-        .to_return(body: '[]')
+        .to_return(body: '[{ "success": true }]')
 
       expect(
         subject.delete('https://target.my.com/api/v1/remarketing_context_phrases/53.json')
-      ).to eq(true)
+      ).to eq([{ 'success' => true }])
     end
   end
 end
