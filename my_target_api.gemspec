@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'my_target_api/version'
 
@@ -19,11 +19,12 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'json'
-  spec.add_dependency 'rest-client'
+  spec.add_runtime_dependency 'json', '~> 2.0', '>= 2.0.0'
+  spec.add_runtime_dependency 'rest-client', '~> 2.0', '>= 2.0.0'
 
   spec.add_development_dependency 'bundler', '~> 1.6'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rspec', '~> 3.7.0'
-  spec.add_development_dependency 'webmock', '~> 2.3.2'
+  spec.add_development_dependency 'rake', '~> 12.3.0', '>= 12.3.0'
+  spec.add_development_dependency 'rspec', '~> 3.7.0', '>= 3.7.0'
+  spec.add_development_dependency 'rubocop', '~> 0.54.0'
+  spec.add_development_dependency 'webmock', '~> 2.3.2', '>= 2.3.2'
 end

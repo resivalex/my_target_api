@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module MyTargetApi
+class MyTargetApi
   # Error class
   class ConnectionError < StandardError
 
