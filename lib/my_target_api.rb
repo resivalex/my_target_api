@@ -1,45 +1,47 @@
 # frozen_string_literal: true
 
-require 'restclient'
-require 'json'
-require 'my_target_api/adapters/banners_adapter'
-require 'my_target_api/adapters/campaigns_adapter'
-require 'my_target_api/adapters/clients_adapter'
-require 'my_target_api/adapters/images_adapter'
-require 'my_target_api/adapters/packages_adapter'
-require 'my_target_api/adapters/statistics_adapter'
-require 'my_target_api/adapters/locations_adapter'
-require 'my_target_api/adapters/service_adapter'
-require 'my_target_api/adapters/counters_adapter'
-require 'my_target_api/adapters/remarketing_adapter'
-require 'my_target_api/adapters/remarketing_users_list_adapter'
-require 'my_target_api/adapters/remarketing_vk_groups_adapter'
-require 'my_target_api/adapters/remarketing_context_phrases_adapter'
-require 'my_target_api/adapters/remarketing_user_geo_adapter'
-require 'my_target_api/adapters/remarketing_pricelist_adapter'
-require 'my_target_api/adapters/projections_adapter'
-require 'my_target_api/adapters/groups_adapter'
-require 'my_target_api/adapters/content_adapter'
-require 'my_target_api/adapters/user_adapter'
-# Api for target_mail
-module MyTargetApi
+# MyTargetApi
+class MyTargetApi
 
-  autoload :Auth, 'my_target_api/auth'
+  API_BASE_URL = 'https://target.my.com/api'
+
+  autoload :Resource, 'my_target_api/resource'
   autoload :Request, 'my_target_api/request'
   autoload :Session, 'my_target_api/session'
 
-  autoload :ConnectionError,  'my_target_api/errors/connection_error'
-  autoload :RequestError,     'my_target_api/errors/request_error'
+  autoload :ConnectionError, 'my_target_api/errors/connection_error'
+  autoload :RequestError, 'my_target_api/errors/request_error'
 
-  class << self
+  def initialize(access_token, options = {})
+    @access_token = access_token
+    @options = options
+  end
 
-    attr_accessor :client_id, :client_secret, :logger
-    attr_writer :scopes
+  def resource(path, options = {})
+    version = options[:v]
+    version_part = version ? "v#{version}" : 'v1'
 
-    def scopes
-      @scopes || 'read_ads,read_payments,create_ads'
-    end
+    Resource.new(self, "#{API_BASE_URL}/#{version_part}/#{path}")
+  end
 
+  def get_request(url, params)
+    request_object.get(url, params.merge(access_token: access_token))
+  end
+
+  def post_request(url, params)
+    request_object.post(url, params.merge(access_token: access_token))
+  end
+
+  def delete_request(url, params)
+    request_object.delete(url, params.merge(access_token: access_token))
+  end
+
+  private
+
+  attr_reader :access_token, :options
+
+  def request_object
+    Request.new(logger: options[:logger])
   end
 
 end
