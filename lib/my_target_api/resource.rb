@@ -40,6 +40,10 @@ class MyTargetApi
       api.delete_request("#{path}/#{id}.json", params)
     end
 
+    def resource(relative_path)
+      MyTargetApi::Resource.new(api, "#{path}/#{relative_path}")
+    end
+
     private
 
     attr_reader :api, :path

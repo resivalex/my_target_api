@@ -47,4 +47,13 @@ describe MyTargetApi::Resource do
       resource.delete(id: 7)
     end
   end
+
+  describe '#resource' do
+    let(:nested_resource) { resource.resource('nested') }
+
+    it 'create nested resource' do
+      expect(api).to receive(:post_request).with('api_path/nested.json', {})
+      nested_resource.create
+    end
+  end
 end
