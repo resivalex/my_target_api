@@ -1,24 +1,87 @@
 # frozen_string_literal: true
 
-# TM request object
-module MyTargetApi
-  # requests
-  module Request
+require 'json'
+require 'rest-client'
 
-    API_URI = 'https://target.my.com/'
-    SUDO_API_URI = 'https://target.my.com/users/'
+class MyTargetApi
+  # Requests
+  class Request
 
-    def request(method, path, params = {}, headers = {})
-      result = make_request(method, path, params, headers).to_s
-      JSON.parse result
-    rescue JSON::ParserError => _e
-      result
+    def initialize(options = {})
+      @logger = options[:logger]
     end
 
-    def make_request(method, path, params = {}, headers = {})
-      exec_params = compact(build(method, path, params, headers).merge(log: MyTargetApi.logger))
-      response = RestClient::Request.execute(exec_params)
-      MyTargetApi.logger << response if MyTargetApi.logger
+    def get(url, params = {})
+      response = with_exception_handling do
+        RestClient::Request.execute(
+          method: :get,
+          url: url,
+          headers: header_parameters(params).merge(headers(params))
+        )
+      end
+
+      process_response(response)
+    end
+
+    def post(url, params = {})
+      response = with_exception_handling do
+        RestClient::Request.execute(
+          method: :post,
+          url: url,
+          payload: body_parameters(params),
+          headers: headers(params)
+        )
+      end
+
+      process_response(response)
+    end
+
+    def delete(url, params = {})
+      result_params = params.dup
+      result_params.delete(:access_token)
+      response = with_exception_handling do
+        RestClient::Request.execute(
+          method: :delete,
+          url: url,
+          headers: header_parameters(params).merge(headers(params))
+        )
+      end
+
+      process_response(response)
+    end
+
+    def body_parameters(params)
+      result_params = params.dup
+      result_params.delete(:access_token)
+
+      if params.values.any? { |param| param.is_a? IO } || params[:grant_type]
+        params.map do |name, value|
+          [name, value.is_a?(Array) || value.is_a?(Hash) ? value.to_json : value]
+        end.to_h
+      else
+        params.to_json
+      end
+    end
+
+    def header_parameters(params)
+      result_params = params.dup
+      result_params.delete(:access_token)
+      result_params
+    end
+
+    def headers(params)
+      { Authorization: "Bearer #{params[:access_token]}" }
+    end
+
+    def process_response(response)
+      JSON.parse(response.body)
+    rescue JSON::ParserError
+      response.body
+    end
+
+    def with_exception_handling
+      response = yield
+      logger << response if logger
       response
     rescue RestClient::Unauthorized, RestClient::Forbidden,
            RestClient::BadRequest, RestClient::RequestFailed,
@@ -32,12 +95,7 @@ module MyTargetApi
 
     private
 
-    def compact(hash)
-      hash.map do |key, value|
-        next nil if value.nil?
-        [key, value]
-      end.compact.to_h
-    end
+    attr_reader :logger
 
     def log_rest_client_exception(exception)
       log_message =
@@ -50,67 +108,7 @@ module MyTargetApi
           HTTP headers: #{exception.http_headers}
         LOG
 
-      MyTargetApi.logger << log_message if MyTargetApi.logger
-    end
-
-    def build(method, path, params, headers)
-      path = build_path(params, path)
-
-      token = params.delete(:token)
-
-      token ? headers.merge!(authorization_header(token)) : params.merge!(client_id_and_secret)
-
-      if method == :get
-        get_request(path, params, headers)
-      elsif method == :post
-        post_request(path, params, headers)
-      elsif method == :delete
-        delete_request(path, params, headers)
-      end
-    end
-
-    def build_path(params, path)
-      path = get_uri(params) + "api/v#{params.delete(:v) || 1}" + path
-      path << '.json' unless path.split('/').last['.']
-      path
-    end
-
-    def authorization_header(token)
-      { Authorization: "Bearer #{token}" }
-    end
-
-    def client_id_and_secret
-      { client_id: MyTargetApi.client_id, client_secret: MyTargetApi.client_secret }
-    end
-
-    def get_request(path, params, headers)
-      {
-        method: :get,
-        url: path,
-        headers: headers.merge(params: params)
-      }
-    end
-
-    def delete_request(path, params, headers)
-      {
-        method: :delete,
-        url: path,
-        headers: headers.merge(params: params)
-      }
-    end
-
-    def post_request(path, params, headers)
-      {
-        method: :post,
-        url: path,
-        payload: params[:grant_type] ? params : params.to_json,
-        headers: headers
-      }
-    end
-
-    def get_uri(params)
-      user = params.delete(:as_user)
-      user ? "#{SUDO_API_URI}#{user}/" : API_URI
+      logger << log_message if logger
     end
 
   end

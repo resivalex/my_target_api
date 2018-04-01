@@ -1,8 +1,9 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4
 
 Layout/EmptyLinesAroundClassBody:
   EnforcedStyle: empty_lines_except_namespace
+
 Layout/EmptyLinesAroundModuleBody:
   EnforcedStyle: empty_lines_except_namespace
 
@@ -19,3 +20,6 @@ Documentation:
 
 MethodLength:
   Max: 12
+
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']

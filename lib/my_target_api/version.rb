@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module MyTargetApi
+class MyTargetApi
 
-  VERSION = '0.0.5'
+  VERSION = '1.0.0'
 
 end

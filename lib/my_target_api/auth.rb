@@ -2,7 +2,7 @@
 
 # see https://target.my.com/doc/api/oauth2
 
-module MyTargetApi
+class MyTargetApi
   # authorization
   class Auth
 
