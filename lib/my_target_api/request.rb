@@ -13,11 +13,7 @@ class MyTargetApi
 
     def get(url, params = {})
       response = with_exception_handling do
-        RestClient::Request.execute(
-          method: :get,
-          url: url,
-          headers: header_parameters(params).merge(headers(params))
-        )
+        RestClient.get(url, headers(params).merge(params: header_parameters(params)))
       end
 
       process_response(response)
@@ -25,26 +21,15 @@ class MyTargetApi
 
     def post(url, params = {})
       response = with_exception_handling do
-        RestClient::Request.execute(
-          method: :post,
-          url: url,
-          payload: body_parameters(params),
-          headers: headers(params)
-        )
+        RestClient.post(url, body_parameters(params), headers(params))
       end
 
       process_response(response)
     end
 
     def delete(url, params = {})
-      result_params = params.dup
-      result_params.delete(:access_token)
       response = with_exception_handling do
-        RestClient::Request.execute(
-          method: :delete,
-          url: url,
-          headers: header_parameters(params).merge(headers(params))
-        )
+        RestClient.delete(url, headers(params).merge(params: header_parameters(params)))
       end
 
       process_response(response)
