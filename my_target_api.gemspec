@@ -10,7 +10,11 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Reshetnikov Ivan']
   spec.email         = ['help@oneretarget.com']
   spec.summary       = 'Ruby client for myTarget API'
-  spec.description   = 'This library was created by OneRetarget.com - advertising automation service'
+  spec.description   = <<~DESC
+    Ruby client for myTarget API.
+    It takes care of JSON parsing, file parameters, nested resources, api versions.
+    OneRetarget.com - advertising automation service
+  DESC
   spec.homepage      = 'https://github.com/resivalex/my_target_api'
   spec.license       = 'MIT'
 

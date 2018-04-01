@@ -7,16 +7,10 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 1.0.1'
+gem 'my_target_api', '~> 1.0.2'
 ```
 
-And then execute:
-
-```
-$ bundle
-```
-
-Or install it yourself as:
+Or install from command line:
 
 ```
 $ gem install my_target_api
@@ -24,40 +18,47 @@ $ gem install my_target_api
 
 ## Usage
 
+### Initialization
 ```ruby
-# initialization
-api = MyTargetApi.new(access_token)
+# You need an access token to use API
+my_target_api = MyTargetApi.new(access_token)
+```
 
+### Resources
+```ruby
+# root resources
+campaigns_resource = my_target_api.resource('campaigns')
+remarketing_resource = my_target_api.resource('remarketing', v: 2)
 
-# get api object
-campaigns_api = api.resource('campaigns')
-remarketing_api = api.resource('remarketing', v: 2)
-remarketing_counters_api = remarketing_api.resource('counters')
+# nested resources
+remarketing_counters_resource = my_target_api.resource('remarketing/counters', v: 2)
+remarketing_counters_resource = remarketing_resource.resource('counters')
+```
 
-# create
-remarketing_counters_api.create(counter_id: 121212) # => [{ id: 343434 }]
+### Create, Read, Update, Delete
+```ruby
+remarketing_counters_resource.create(counter_id: 121212) # => [{ id: 343434 }]
 
-# read all
-campaigns_api.read # => [{ id: 12345, ... }, { ... }]
+campaigns_resource.read # => [{ id: 12345, ... }, { ... }]
 
-# read
-campaigns_api.read(id: 12345) # => [{ id: 12345, ... }]
+campaigns_resource.read(id: 12345) # => [{ id: 12345, ... }]
 
-# update
-campaigns_api.update(id: 12345, status: 'blocked') # => [{ id: 12345, status: 'blocked' }]
+campaigns_resource.update(id: 12345, status: 'blocked') # => [{ id: 12345, status: 'blocked' }]
 
-# delete
-remarketing_counters_api.delete(id: 343434) # => true
+remarketing_counters_resource.delete(id: 343434) # => true
 ```
 
 ## Exceptions
 
 ```ruby
 def read_active_campaigns
-  campaigns_api.read(status: 'active')
+
+  campaigns_resource.read(status: 'active')
+
 rescue MyTargetApi::RequestError, MyTargetApi::ConnectionError => e
-  logger.error(e)
-  raise
+
+  puts e.message, e.backtrace
+
 end
 ```
 
