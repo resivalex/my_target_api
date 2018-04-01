@@ -29,5 +29,14 @@ describe MyTargetApi::Request do
       expect(subject.get('https://target.my.com/api/v1/vk_groups.json', q: 'unfound'))
         .to eq([])
     end
+
+    it 'deletes object' do
+      stub_request(:delete, 'https://target.my.com/api/v1/remarketing_context_phrases/53.json')
+        .to_return(body: '[]')
+
+      expect(
+        subject.delete('https://target.my.com/api/v1/remarketing_context_phrases/53.json')
+      ).to eq(true)
+    end
   end
 end

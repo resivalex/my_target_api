@@ -28,11 +28,11 @@ class MyTargetApi
     end
 
     def delete(url, params = {})
-      response = with_exception_handling do
+      with_exception_handling do
         RestClient.delete(url, headers(params).merge(params: header_parameters(params)))
       end
 
-      process_response(response)
+      true
     end
 
     def body_parameters(params)
