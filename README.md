@@ -7,7 +7,7 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 1.0.2'
+gem 'my_target_api', '~> 1.0.3'
 ```
 
 Or install from command line:
@@ -37,15 +37,15 @@ remarketing_counters_resource = remarketing_resource.resource('counters')
 
 ### Create, Read, Update, Delete
 ```ruby
-remarketing_counters_resource.create(counter_id: 121212) # => [{ id: 343434 }]
+remarketing_counters_resource.create(counter_id: 121212) # => [{ 'id' => 343434 }]
 
-campaigns_resource.read # => [{ id: 12345, ... }, { ... }]
+campaigns_resource.read # => [{ 'id' => 12345, ... }, { ... }]
 
-campaigns_resource.read(id: 12345) # => [{ id: 12345, ... }]
+campaigns_resource.read(id: 12345) # => [{ 'id' => 12345, ... }]
 
-campaigns_resource.update(id: 12345, status: 'blocked') # => [{ id: 12345, status: 'blocked' }]
+campaigns_resource.update(id: 12345, status: 'blocked') # => [{ 'id' => 12345, 'status' => 'blocked' }]
 
-remarketing_counters_resource.delete(id: 343434) # => true
+remarketing_counters_resource.delete(id: 343434) # => [{ 'success' => true }]
 ```
 
 ## Exceptions
