@@ -4,8 +4,8 @@ class MyTargetApi
   # Error class
   class ConnectionError < StandardError
 
-    def initialize(e)
-      @exception = e
+    def initialize(exception)
+      @exception = exception
     end
 
     def message

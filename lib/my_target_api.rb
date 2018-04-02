@@ -7,10 +7,10 @@ class MyTargetApi
 
   autoload :Resource, 'my_target_api/resource'
   autoload :Request, 'my_target_api/request'
-  autoload :Session, 'my_target_api/session'
 
-  autoload :ConnectionError, 'my_target_api/errors/connection_error'
-  autoload :RequestError, 'my_target_api/errors/request_error'
+  autoload :ConnectionError, 'my_target_api/connection_error'
+  autoload :RequestError, 'my_target_api/request_error'
+  autoload :InterfaceError, 'my_target_api/using_error'
 
   def initialize(access_token, options = {})
     @access_token = access_token

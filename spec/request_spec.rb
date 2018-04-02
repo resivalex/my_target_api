@@ -38,5 +38,13 @@ describe MyTargetApi::Request do
         subject.delete('https://target.my.com/api/v1/remarketing_context_phrases/53.json')
       ).to eq([{ 'success' => true }])
     end
+
+    it 'raises exception on bad statuses' do
+      stub_request(:get, 'https://target.my.com/api/v1/wrong_path.json')
+        .to_return(body: 'Unknown resource', status: 404)
+
+      expect { subject.get('https://target.my.com/api/v1/wrong_path.json') }
+        .to raise_error(MyTargetApi::RequestError, 'Unknown resource')
+    end
   end
 end
