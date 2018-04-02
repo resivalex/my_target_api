@@ -35,17 +35,25 @@ class MyTargetApi
       process_response(response)
     end
 
+    private
+
+    attr_reader :logger
+
     def body_parameters(params)
       result_params = params.dup
       result_params.delete(:access_token)
 
       if params.values.any? { |param| param.is_a? IO } || params[:grant_type]
-        params.map do |name, value|
-          [name, value.is_a?(Array) || value.is_a?(Hash) ? value.to_json : value]
-        end.to_h
+        individual_body_parameters(params)
       else
         params.to_json
       end
+    end
+
+    def individual_body_parameters(params)
+      params.map do |name, value|
+        [name, value.is_a?(Array) || value.is_a?(Hash) ? value.to_json : value]
+      end.to_h
     end
 
     def header_parameters(params)
@@ -77,10 +85,6 @@ class MyTargetApi
     rescue SocketError => e
       raise MyTargetApi::ConnectionError, e
     end
-
-    private
-
-    attr_reader :logger
 
     def log_rest_client_exception(exception)
       log_message =
