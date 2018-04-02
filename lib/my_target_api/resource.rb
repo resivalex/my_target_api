@@ -10,36 +10,33 @@ class MyTargetApi
     end
 
     def create(params = {})
-      params = prepare_params(params)
-
-      api.post_request("#{path}.json", params)
+      with_prepared_params(params) do |prepared|
+        api.post_request("#{path}.json", prepared)
+      end
     end
 
     def read(params = {})
-      params = prepare_params(params)
-      id = params.delete(:id)
+      with_prepared_params(params) do |prepared|
+        id = prepared.delete(:id)
 
-      if id
-        api.get_request("#{path}/#{id}.json", params)
-      else
-        api.get_request("#{path}.json", params)
+        if id
+          api.get_request("#{path}/#{id}.json", prepared)
+        else
+          api.get_request("#{path}.json", prepared)
+        end
       end
     end
 
     def update(params = {})
-      params = prepare_params(params)
-      id = params.delete(:id)
-      raise ArgumentError, ':id is required' unless id
-
-      api.post_request("#{path}/#{id}.json", params)
+      with_id_and_prepared_params(params) do |id, prepared|
+        api.post_request("#{path}/#{id}.json", prepared)
+      end
     end
 
     def delete(params = {})
-      params = prepare_params(params)
-      id = params.delete(:id)
-      raise ArgumentError, ':id is required' unless id
-
-      api.delete_request("#{path}/#{id}.json", params)
+      with_id_and_prepared_params(params) do |id, prepared|
+        api.delete_request("#{path}/#{id}.json", prepared)
+      end
     end
 
     def resource(relative_path)
@@ -50,12 +47,23 @@ class MyTargetApi
 
     attr_reader :api, :path
 
-    def prepare_params(params)
+    def with_prepared_params(params)
       raise ArgumentError, 'Params must be a Hash' unless params.is_a? Hash
 
-      params.map do |param, value|
+      prepared = params.map do |param, value|
         [param.to_sym, value]
       end.to_h
+
+      yield prepared
+    end
+
+    def with_id_and_prepared_params(params)
+      with_prepared_params(params) do |prepared|
+        id = prepared.delete(:id)
+        raise ArgumentError, ':id is required' unless id
+
+        yield id, prepared.dup
+      end
     end
 
   end
