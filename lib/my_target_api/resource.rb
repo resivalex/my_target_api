@@ -29,6 +29,7 @@ class MyTargetApi
     def update(params = {})
       params = prepare_params(params)
       id = params.delete(:id)
+      raise ArgumentError, ':id is required' unless id
 
       api.post_request("#{path}/#{id}.json", params)
     end
@@ -36,6 +37,7 @@ class MyTargetApi
     def delete(params = {})
       params = prepare_params(params)
       id = params.delete(:id)
+      raise ArgumentError, ':id is required' unless id
 
       api.delete_request("#{path}/#{id}.json", params)
     end
@@ -49,7 +51,7 @@ class MyTargetApi
     attr_reader :api, :path
 
     def prepare_params(params)
-      raise UsingError, 'Params must be a Hash' unless params.is_a? Hash
+      raise ArgumentError, 'Params must be a Hash' unless params.is_a? Hash
 
       params.map do |param, value|
         [param.to_sym, value]
