@@ -2,5 +2,5 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in mailru_target.gemspec
+# Specify your gem's dependencies in my_target_api.gemspec
 gemspec

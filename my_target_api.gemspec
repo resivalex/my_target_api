@@ -7,7 +7,7 @@ require 'my_target_api/version'
 Gem::Specification.new do |spec|
   spec.name          = 'my_target_api'
   spec.version       = MyTargetApi::VERSION
-  spec.authors       = ['Reshetnikov Ivan']
+  spec.authors       = ['OneRetarget.com']
   spec.email         = ['help@oneretarget.com']
   spec.summary       = 'Ruby client for myTarget API'
   spec.description   = <<~DESC
