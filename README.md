@@ -7,7 +7,7 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 1.0.5'
+gem 'my_target_api', '~> 1.1.0'
 ```
 
 Or install from command line:
@@ -58,6 +58,15 @@ static_resource = my_target_api.resource('content/static', v: 2)
 picture = File.new('path/to/picture.jpg', 'rb')
 
 static_resource.create(file: picture, data: { width: 1200, height: 800 })
+```
+
+### Raw data upload
+
+```ruby
+search_phrases_resource = my_target_api.resource('search_phrases', v: 2)
+phrases = "phrase\nfirst phrase\nsecond phrase\n"
+
+search_phrases_resource.upload(phrases, name: 'search phrases list')
 ```
 
 ## Exceptions

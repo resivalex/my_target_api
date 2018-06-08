@@ -13,38 +13,46 @@ describe MyTargetApi::Resource do
     it { expect(resource).to respond_to :read }
     it { expect(resource).to respond_to :update }
     it { expect(resource).to respond_to :delete }
+    it { expect(resource).to respond_to :upload }
   end
 
   describe '#create' do
-    it 'request path to all objects' do
-      expect(api).to receive(:post_request).with('api_path.json', {})
-      resource.create
+    it 'index request path' do
+      expect(api).to receive(:post_request).with('api_path.json', param: 'param')
+      resource.create(param: 'param')
     end
   end
 
   describe '#read' do
-    it 'request path to all objects' do
-      expect(api).to receive(:get_request).with('api_path.json', {})
-      resource.read
+    it 'index request path' do
+      expect(api).to receive(:get_request).with('api_path.json', param: 'param')
+      resource.read(param: 'param')
     end
 
-    it 'request path to one object' do
-      expect(api).to receive(:get_request).with('api_path/7.json', {})
-      resource.read(id: 7)
+    it 'request path to a single object' do
+      expect(api).to receive(:get_request).with('api_path/7.json', param: 'param')
+      resource.read(id: 7, param: 'param')
     end
   end
 
   describe '#update' do
-    it 'request path to all objects' do
-      expect(api).to receive(:get_request).with('api_path.json', {})
-      resource.read
+    it 'index request path' do
+      expect(api).to receive(:get_request).with('api_path.json', param: 'param')
+      resource.read(param: 'param')
     end
   end
 
   describe '#delete' do
-    it 'request path to all objects' do
-      expect(api).to receive(:delete_request).with('api_path/7.json', {})
-      resource.delete(id: 7)
+    it 'request path to a single object' do
+      expect(api).to receive(:delete_request).with('api_path/7.json', param: 'param')
+      resource.delete(id: 7, param: 'param')
+    end
+  end
+
+  describe '#upload' do
+    it 'index request path' do
+      expect(api).to receive(:upload_request).with('api_path.json', 'content', param: 'param')
+      resource.upload('content', param: 'param')
     end
   end
 

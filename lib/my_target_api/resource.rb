@@ -39,6 +39,12 @@ class MyTargetApi
       end
     end
 
+    def upload(content, params = {})
+      with_prepared_params(params) do |prepared|
+        api.upload_request("#{path}.json", content, prepared)
+      end
+    end
+
     def resource(relative_path)
       MyTargetApi::Resource.new(api, "#{path}/#{relative_path}")
     end
