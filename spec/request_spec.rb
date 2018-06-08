@@ -39,6 +39,19 @@ describe MyTargetApi::Request do
       ).to eq([{ 'success' => true }])
     end
 
+    it 'uploads raw content' do
+      stub_request(:post, 'https://target.my.com/api/v2/search_phrases.json?name=list')
+        .to_return(body: '{"id": 123, "name": "list"}')
+
+      expect(
+        subject.upload(
+          'https://target.my.com/api/v2/search_phrases.json',
+          "phrase\nfirst\nsecond",
+          name: 'list'
+        )
+      ).to eq('id' => 123, 'name' => 'list')
+    end
+
     it 'raises exception on bad statuses' do
       stub_request(:get, 'https://target.my.com/api/v1/wrong_path.json')
         .to_return(body: 'Unknown resource', status: 404)
