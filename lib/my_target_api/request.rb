@@ -13,7 +13,7 @@ class MyTargetApi
 
     def get(url, params = {})
       response = with_exception_handling do
-        RestClient.get(url, headers(params).merge(params: header_parameters(params)))
+        RestClient.get(url, headers(params).merge(query(params)))
       end
 
       process_response(response)
@@ -29,7 +29,15 @@ class MyTargetApi
 
     def delete(url, params = {})
       response = with_exception_handling do
-        RestClient.delete(url, headers(params).merge(params: header_parameters(params)))
+        RestClient.delete(url, headers(params).merge(query(params)))
+      end
+
+      process_response(response)
+    end
+
+    def upload(url, content, params = {})
+      response = with_exception_handling do
+        RestClient.post(url, content, headers(params).merge(query(params)))
       end
 
       process_response(response)
@@ -60,6 +68,10 @@ class MyTargetApi
       result_params = params.dup
       result_params.delete(:access_token)
       result_params
+    end
+
+    def query(params)
+      { params: header_parameters(params) }
     end
 
     def headers(params)

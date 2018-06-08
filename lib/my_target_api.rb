@@ -10,7 +10,6 @@ class MyTargetApi
 
   autoload :ConnectionError, 'my_target_api/connection_error'
   autoload :RequestError, 'my_target_api/request_error'
-  autoload :InterfaceError, 'my_target_api/using_error'
 
   def initialize(access_token, options = {})
     @access_token = access_token
@@ -34,6 +33,10 @@ class MyTargetApi
 
   def delete_request(url, params)
     request_object.delete(url, params.merge(access_token: access_token))
+  end
+
+  def upload_request(url, content, params)
+    request_object.upload(url, content, params.merge(access_token: access_token))
   end
 
   private
