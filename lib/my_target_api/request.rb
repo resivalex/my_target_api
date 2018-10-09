@@ -8,10 +8,12 @@ class MyTargetApi
   class Request
 
     def initialize(options = {})
-      @logger = options[:logger]
+      @options = options
     end
 
     def get(url, params = {})
+      log_hash(method: 'Request#get', url: url, params: params)
+
       response = with_exception_handling do
         RestClient.get(url, headers(params).merge(query(params)))
       end
@@ -20,6 +22,8 @@ class MyTargetApi
     end
 
     def post(url, params = {})
+      log_hash(method: 'Request#post', url: url, params: params)
+
       response = with_exception_handling do
         RestClient.post(url, body_parameters(params), headers(params))
       end
@@ -28,6 +32,8 @@ class MyTargetApi
     end
 
     def delete(url, params = {})
+      log_hash(method: 'Request#delete', url: url, params: params)
+
       response = with_exception_handling do
         RestClient.delete(url, headers(params).merge(query(params)))
       end
@@ -36,6 +42,8 @@ class MyTargetApi
     end
 
     def upload(url, content, params = {})
+      log_hash(method: 'Request#upload', url: url, params: params, content: 'no logging')
+
       response = with_exception_handling do
         RestClient.post(url, content, headers(params).merge(query(params)))
       end
@@ -45,7 +53,7 @@ class MyTargetApi
 
     private
 
-    attr_reader :logger
+    attr_reader :options
 
     def body_parameters(params)
       result_params = params.dup
@@ -110,6 +118,18 @@ class MyTargetApi
         LOG
 
       logger << log_message if logger
+    end
+
+    def log_hash(hash)
+      return unless logger
+
+      logger << hash.map do |key, value|
+        "#{key}: #{value.is_a?(String) ? value : value.inspect}"
+      end.join("\n")
+    end
+
+    def logger
+      options[:logger]
     end
 
   end

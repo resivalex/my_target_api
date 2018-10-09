@@ -11,6 +11,7 @@ describe MyTargetApi::Request do
     it { expect(request).to respond_to(:get) }
     it { expect(request).to respond_to(:post) }
     it { expect(request).to respond_to(:delete) }
+    it { expect(request).to respond_to(:upload) }
   end
 
   describe 'request something' do
@@ -58,6 +59,19 @@ describe MyTargetApi::Request do
 
       expect { subject.get('https://target.my.com/api/v1/wrong_path.json') }
         .to raise_error(MyTargetApi::RequestError, 'Unknown resource')
+    end
+  end
+
+  describe 'logs' do
+    let(:logger) { double('Logger double', '<<': nil) }
+    let(:request) { MyTargetApi::Request.new(logger: logger) }
+
+    it 'pass parameters by url in get' do
+      stub_request(:get, 'https://target.my.com/api/v1/request.json')
+        .to_return(body: '[]')
+
+      expect(logger).to(receive(:<<))
+      request.get('https://target.my.com/api/v1/request.json')
     end
   end
 end
