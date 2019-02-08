@@ -4,7 +4,10 @@ class MyTargetApi
   # Error for request
   class RequestError < StandardError
 
+    attr_reader :original_exception
+
     def initialize(exception)
+      @original_exception = exception
       super build_message exception
     end
 

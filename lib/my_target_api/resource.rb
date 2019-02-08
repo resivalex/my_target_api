@@ -16,9 +16,7 @@ class MyTargetApi
     end
 
     def read(params = {})
-      with_prepared_params(params) do |prepared|
-        id = prepared.delete(:id)
-
+      with_id_and_prepared_params(params) do |id, prepared|
         if id
           api.get_request("#{path}/#{id}.json", prepared)
         else
@@ -28,13 +26,13 @@ class MyTargetApi
     end
 
     def update(params = {})
-      with_id_and_prepared_params(params) do |id, prepared|
+      with_id_and_prepared_params(params, assert_id_existence: true) do |id, prepared|
         api.post_request("#{path}/#{id}.json", prepared)
       end
     end
 
     def delete(params = {})
-      with_id_and_prepared_params(params) do |id, prepared|
+      with_id_and_prepared_params(params, assert_id_existence: true) do |id, prepared|
         api.delete_request("#{path}/#{id}.json", prepared)
       end
     end
@@ -63,10 +61,11 @@ class MyTargetApi
       yield prepared
     end
 
-    def with_id_and_prepared_params(params)
+    def with_id_and_prepared_params(params, assert_id_existence: false)
       with_prepared_params(params) do |prepared|
-        id = prepared.delete(:id)
-        raise ArgumentError, ':id is required' unless id
+        id_key_param = prepared.delete(:id_param_key) || :id
+        id = prepared.delete(id_key_param.to_sym)
+        raise ArgumentError, ':id is required' if assert_id_existence && id.nil?
 
         yield id, prepared.dup
       end

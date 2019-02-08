@@ -29,9 +29,16 @@ describe MyTargetApi::Resource do
       resource.read(param: 'param')
     end
 
-    it 'request path to a single object' do
-      expect(api).to receive(:get_request).with('api_path/7.json', param: 'param')
-      resource.read(id: 7, param: 'param')
+    describe 'request path to a single object' do
+      it 'request path to a single object with default id key' do
+        expect(api).to receive(:get_request).with('api_path/7.json', param: 'param')
+        resource.read(id: 7, param: 'param')
+      end
+
+      it 'request path to a single object with custom id key' do
+        expect(api).to receive(:get_request).with('api_path/8.json', param: 'param')
+        resource.read(id_param_key: :custom_id, custom_id: 8, param: 'param')
+      end
     end
   end
 
