@@ -39,9 +39,10 @@ remarketing_counters_resource = remarketing_resource.resource('counters')
 
 #### Options
 
-| Name | Default value | Description |
-|---|---|---|
-| v | 1 | API version |
+Name | Default value | Description
+---|---|---
+`:v` | 1 | API version
+`:logger` |   | An object to log requests and exceptions. The object must respond to `<<` method
 
 ### Create, Read, Update, Delete
 
@@ -61,7 +62,7 @@ remarketing_counters_resource.delete(id: 343434) # => [{ 'success' => true }]
 
  Name | Default value | Description 
 ---|---|---
- `:id` | | Resource ID. Optional for Read, required for Update and Delete
+ `:id` |   | Resource ID. Optional for Read, required for Update and Delete
  `:id_param_key` | `:id` | Option key for resource ID
 
 ### Changing default ID param name
@@ -99,7 +100,7 @@ rescue MyTargetApi::RequestError, MyTargetApi::ConnectionError => e
 
   puts e.message, e.backtrace
   # You can access the original exception
-  original_exception = e.original_exception
+  puts e.original_exception.message, e.original_exception.backtrace
 
 end
 ```
