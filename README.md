@@ -7,7 +7,7 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 1.1.1'
+gem 'my_target_api', '~> 1.2.0'
 ```
 
 Or install from command line:
@@ -28,14 +28,20 @@ my_target_api = MyTargetApi.new(access_token)
 ### Resources
 
 ```ruby
-# root resources
+# Root resources
 campaigns_resource = my_target_api.resource('campaigns')
 remarketing_resource = my_target_api.resource('remarketing', v: 2)
 
-# nested resources
+# Nested resources
 remarketing_counters_resource = my_target_api.resource('remarketing/counters', v: 2)
 remarketing_counters_resource = remarketing_resource.resource('counters')
 ```
+
+#### Options
+
+| Name | Default value | Description |
+|---|---|---|
+| v | 1 | API version |
 
 ### Create, Read, Update, Delete
 
@@ -49,6 +55,19 @@ campaigns_resource.read(id: 12345) # => [{ 'id' => 12345, ... }]
 campaigns_resource.update(id: 12345, status: 'blocked') # => [{ 'id' => 12345, 'status' => 'blocked' }]
 
 remarketing_counters_resource.delete(id: 343434) # => [{ 'success' => true }]
+```
+
+#### Options
+
+ Name | Default value | Description 
+---|---|---
+ `:id` | | Resource ID. Optional for Read, required for Update and Delete
+ `:id_param_key` | `:id` | Option key for resource ID
+
+### Changing default ID param name
+
+```ruby
+campaigns_resource.read(id_key_param: :campaign_id, campaign_id: 12345) # => [{ 'id' => 12345, ... }]
 ```
 
 ### File upload
@@ -79,9 +98,16 @@ def read_active_campaigns
 rescue MyTargetApi::RequestError, MyTargetApi::ConnectionError => e
 
   puts e.message, e.backtrace
+  # You can access the original exception
+  original_exception = e.original_exception
 
 end
 ```
+
+ Name | Description 
+---|---
+ `MyTargetApi::RequestError` | Request didn't succeed
+ `MyTargetApi::ConnectionError` | Connection didn't succeed
 
 ## Testing
 
