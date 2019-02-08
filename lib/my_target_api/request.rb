@@ -94,13 +94,13 @@ class MyTargetApi
 
     def with_exception_handling
       response = yield
-      logger << response if logger
+      log(response)
       response
-    rescue RestClient::Unauthorized, RestClient::Forbidden,
-           RestClient::BadRequest, RestClient::RequestFailed,
-           RestClient::ResourceNotFound => e
-
+    rescue RestClient::ExceptionWithResponse => e
       log_rest_client_exception(e)
+      raise MyTargetApi::RequestError, e
+    rescue RestClient::Exception => e
+      log("#{e.class.name} #{e.message}")
       raise MyTargetApi::RequestError, e
     rescue SocketError => e
       raise MyTargetApi::ConnectionError, e
@@ -117,19 +117,17 @@ class MyTargetApi
           HTTP headers: #{exception.http_headers}
         LOG
 
-      logger << log_message if logger
+      log(log_message)
     end
 
     def log_hash(hash)
-      return unless logger
-
-      logger << hash.map do |key, value|
+      log(hash.map do |key, value|
         "#{key}: #{value.is_a?(String) ? value : value.inspect}"
-      end.join("\n")
+      end.join("\n"))
     end
 
-    def logger
-      options[:logger]
+    def log(message)
+      options[:logger] << message if options[:logger]
     end
 
   end
