@@ -59,10 +59,10 @@ class MyTargetApi
       result_params = params.dup
       result_params.delete(:access_token)
 
-      if params.values.any? { |param| param.is_a? IO } || params[:grant_type]
-        individual_body_parameters(params)
+      if result_params.values.any? { |param| param.is_a? IO } || result_params[:grant_type]
+        individual_body_parameters(result_params)
       else
-        params.to_json
+        result_params.to_json
       end
     end
 
