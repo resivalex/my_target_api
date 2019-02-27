@@ -24,19 +24,19 @@ class MyTargetApi
   end
 
   def get_request(url, params)
-    request_object.get(url, params.merge(access_token: access_token))
+    request_object.get(url, params)
   end
 
   def post_request(url, params)
-    request_object.post(url, params.merge(access_token: access_token))
+    request_object.post(url, params)
   end
 
   def delete_request(url, params)
-    request_object.delete(url, params.merge(access_token: access_token))
+    request_object.delete(url, params)
   end
 
   def upload_request(url, content, params)
-    request_object.upload(url, content, params.merge(access_token: access_token))
+    request_object.upload(url, content, params)
   end
 
   private
