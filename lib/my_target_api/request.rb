@@ -15,7 +15,7 @@ class MyTargetApi
       log_hash(method: 'Request#get', url: url, params: params)
 
       response = with_exception_handling do
-        RestClient.get(url, headers(params).merge(query(params)))
+        RestClient.get(url, headers.merge(query(params)))
       end
 
       process_response(response)
@@ -25,7 +25,7 @@ class MyTargetApi
       log_hash(method: 'Request#post', url: url, params: params)
 
       response = with_exception_handling do
-        RestClient.post(url, body_parameters(params), headers(params))
+        RestClient.post(url, body_parameters(params), headers)
       end
 
       process_response(response)
@@ -35,7 +35,7 @@ class MyTargetApi
       log_hash(method: 'Request#delete', url: url, params: params)
 
       response = with_exception_handling do
-        RestClient.delete(url, headers(params).merge(query(params)))
+        RestClient.delete(url, headers.merge(query(params)))
       end
 
       process_response(response)
@@ -45,7 +45,7 @@ class MyTargetApi
       log_hash(method: 'Request#upload', url: url, params: params, content: 'no logging')
 
       response = with_exception_handling do
-        RestClient.post(url, content, headers(params).merge(query(params)))
+        RestClient.post(url, content, headers.merge(query(params)))
       end
 
       process_response(response)
@@ -57,7 +57,6 @@ class MyTargetApi
 
     def body_parameters(params)
       result_params = params.dup
-      result_params.delete(:access_token)
 
       if result_params.values.any? { |param| param.is_a? IO } || result_params[:grant_type]
         individual_body_parameters(result_params)
@@ -72,18 +71,12 @@ class MyTargetApi
       end.to_h
     end
 
-    def header_parameters(params)
-      result_params = params.dup
-      result_params.delete(:access_token)
-      result_params
-    end
-
     def query(params)
-      { params: header_parameters(params) }
+      { params: params }
     end
 
-    def headers(params)
-      { Authorization: "Bearer #{params[:access_token]}" }
+    def headers
+      { Authorization: "Bearer #{access_token}" }
     end
 
     def process_response(response)
@@ -128,6 +121,10 @@ class MyTargetApi
 
     def log(message)
       options[:logger] << message if options[:logger]
+    end
+
+    def access_token
+      options[:access_token]
     end
 
   end
