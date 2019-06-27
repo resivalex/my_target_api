@@ -45,7 +45,9 @@ class MyTargetApi
       log_hash(method: 'Request#upload', url: url, params: params, content: 'no logging')
 
       response = with_exception_handling do
-        RestClient.post(url, content, headers.merge(query(params)))
+        RestClient.post(
+          url, content, headers.merge(query(params)).merge(content_type: 'application/octet-stream')
+        )
       end
 
       process_response(response)
