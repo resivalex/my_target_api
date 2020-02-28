@@ -78,7 +78,10 @@ class MyTargetApi
     end
 
     def headers
-      { Authorization: "Bearer #{access_token}" }
+      {
+        Authorization: "Bearer #{access_token}",
+        **optional_headers
+      }
     end
 
     def process_response(response)
@@ -127,6 +130,10 @@ class MyTargetApi
 
     def access_token
       options[:access_token]
+    end
+
+    def optional_headers
+      options[:headers] || {}
     end
 
   end
