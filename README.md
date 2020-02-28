@@ -43,6 +43,7 @@ Name | Default value | Description
 ---|---|---
 `:v` | 1 | API version
 `:logger` |   | An object to log requests and exceptions. The object must respond to `<<` method
+`:headers` | | Headers hash to pass with request
 
 ### Create, Read, Update, Delete
 
