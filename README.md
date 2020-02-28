@@ -7,7 +7,7 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 1.2.4'
+gem 'my_target_api', '~> 1.2.5'
 ```
 
 Or install from command line:
@@ -43,6 +43,7 @@ Name | Default value | Description
 ---|---|---
 `:v` | 1 | API version
 `:logger` |   | An object to log requests and exceptions. The object must respond to `<<` method
+`:headers` | | Headers hash to pass with request
 
 ### Create, Read, Update, Delete
 
@@ -60,7 +61,7 @@ remarketing_counters_resource.delete(id: 343434) # => [{ 'success' => true }]
 
 #### Options
 
- Name | Default value | Description 
+ Name | Default value | Description
 ---|---|---
  `:id` |   | Resource ID. Optional for Read, required for Update and Delete
  `:id_param_key` | `:id` | Option key for resource ID
@@ -105,7 +106,7 @@ rescue MyTargetApi::RequestError, MyTargetApi::ConnectionError => e
 end
 ```
 
- Name | Description 
+ Name | Description
 ---|---
  `MyTargetApi::RequestError` | Request didn't succeed
  `MyTargetApi::ConnectionError` | Connection didn't succeed

@@ -44,7 +44,7 @@ class MyTargetApi
   attr_reader :access_token, :options
 
   def request_object
-    Request.new(logger: options[:logger], access_token: access_token)
+    Request.new(logger: options[:logger], access_token: access_token, headers: options[:headers])
   end
 
 end
