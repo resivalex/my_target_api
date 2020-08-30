@@ -16,41 +16,62 @@ describe MyTargetApi::Request do
 
   describe 'request something' do
     it 'return parsed json' do
-      stub_request(:post, 'https://target.my.com/api/v1/campaigns.json')
-        .to_return(body: '{"name": "Campaign 1"}')
+      allow(RestClient).to receive(:post).and_return(double(body: '{"name": "Campaign 1"}'))
 
-      expect(subject.post('https://target.my.com/api/v1/campaigns.json'))
-        .to eq('name' => 'Campaign 1')
+      result = subject.post('https://target.my.com/api/v1/campaigns.json')
+
+      expect(RestClient).to have_received(:post).with('https://target.my.com/api/v1/campaigns.json',
+                                                      '{}',
+                                                      Authorization: 'Bearer ')
+
+      expect(result).to eq('name' => 'Campaign 1')
     end
 
     it 'pass parameters by url in get' do
-      stub_request(:get, 'https://target.my.com/api/v1/vk_groups.json?q=unfound')
-        .to_return(body: '[]')
+      allow(RestClient).to receive(:get).and_return(double(body: '[]'))
 
-      expect(subject.get('https://target.my.com/api/v1/vk_groups.json', q: 'unfound'))
-        .to eq([])
+      result = subject.get('https://target.my.com/api/v1/vk_groups.json', q: 'unfound')
+
+      expect(RestClient).to have_received(:get).with('https://target.my.com/api/v1/vk_groups.json',
+                                                     params: { q: 'unfound' },
+                                                     Authorization: 'Bearer ')
+      expect(result).to eq([])
     end
 
     it 'deletes object' do
-      stub_request(:delete, 'https://target.my.com/api/v1/remarketing_context_phrases/53.json')
-        .to_return(body: '[{ "success": true }]')
+      allow(RestClient).to receive(:delete).and_return(double(body: '[{ "success": true }]'))
 
-      expect(
-        subject.delete('https://target.my.com/api/v1/remarketing_context_phrases/53.json')
-      ).to eq([{ 'success' => true }])
+      result = subject.delete('https://target.my.com/api/v1/remarketing_context_phrases/53.json')
+
+      expect(RestClient).to(
+        have_received(:delete).with(
+          'https://target.my.com/api/v1/remarketing_context_phrases/53.json',
+          params: {},
+          Authorization: 'Bearer '
+        )
+      )
+      expect(result).to eq([{ 'success' => true }])
     end
 
     it 'uploads raw content' do
-      stub_request(:post, 'https://target.my.com/api/v2/search_phrases.json?name=list')
-        .to_return(body: '{"id": 123, "name": "list"}')
+      allow(RestClient).to receive(:post).and_return(double(body: '{"id": 123, "name": "list"}'))
 
-      expect(
-        subject.upload(
+      result = subject.upload(
+        'https://target.my.com/api/v2/search_phrases.json',
+        "phrase\nfirst\nsecond",
+        name: 'list'
+      )
+
+      expect(RestClient).to(
+        have_received(:post).with(
           'https://target.my.com/api/v2/search_phrases.json',
           "phrase\nfirst\nsecond",
-          name: 'list'
+          Authorization: 'Bearer ',
+          content_type: 'application/octet-stream',
+          params: { name: 'list' }
         )
-      ).to eq('id' => 123, 'name' => 'list')
+      )
+      expect(result).to eq('id' => 123, 'name' => 'list')
     end
 
     it 'raises exception on bad statuses' do
@@ -67,11 +88,15 @@ describe MyTargetApi::Request do
     let(:request) { MyTargetApi::Request.new(logger: logger) }
 
     it 'pass parameters by url in get' do
-      stub_request(:get, 'https://target.my.com/api/v1/request.json')
-        .to_return(body: '[]')
+      logger = double('Logger double', '<<': nil)
+      request = MyTargetApi::Request.new(logger: logger)
+      allow(RestClient).to receive(:get).and_return(double(body: 'response body'))
 
-      expect(logger).to(receive(:<<))
       request.get('https://target.my.com/api/v1/request.json')
+
+      expect(logger).to(have_received(:<<).with("method: Request#get\n"\
+        "url: https://target.my.com/api/v1/request.json\n"\
+        'params: {}'))
     end
   end
 end
