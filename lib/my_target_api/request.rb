@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'rest-client'
 
 class MyTargetApi
   # Requests
@@ -15,7 +14,7 @@ class MyTargetApi
       log_hash(method: 'Request#get', url: url, params: params)
 
       response = with_exception_handling(params) do
-        RestClient.get(url, headers.merge(query(params)))
+        NetClient.get(url, headers.merge(query(params)))
       end
 
       process_response(response)
@@ -25,7 +24,7 @@ class MyTargetApi
       log_hash(method: 'Request#post', url: url, params: params)
 
       response = with_exception_handling(params) do
-        RestClient.post(url, body_parameters(params), headers)
+        NetClient.post(url, body_parameters(params), headers)
       end
 
       process_response(response)
@@ -35,7 +34,7 @@ class MyTargetApi
       log_hash(method: 'Request#delete', url: url, params: params)
 
       response = with_exception_handling(params) do
-        RestClient.delete(url, headers.merge(query(params)))
+        NetClient.delete(url, headers.merge(query(params)))
       end
 
       process_response(response)
@@ -45,7 +44,7 @@ class MyTargetApi
       log_hash(method: 'Request#upload', url: url, params: params, content: 'no logging')
 
       response = with_exception_handling(params) do
-        RestClient.post(
+        NetClient.post(
           url, content, headers.merge(query(params)).merge(content_type: 'application/octet-stream')
         )
       end
@@ -92,34 +91,32 @@ class MyTargetApi
 
     def with_exception_handling(params)
       response = yield
-      log(response)
+      if response.code >= 400
+        log_response(response)
+        raise_with_params(params, response: response.body)
+      end
+      log(response.to_s)
       response
-    rescue RestClient::ExceptionWithResponse => e
-      log_rest_client_exception(e)
-      raise_with_params(e, params)
-    rescue RestClient::Exception => e
-      log("#{e.class.name} #{e.message}")
-      raise_with_params(e, params)
-    rescue SocketError => e
-      raise MyTargetApi::ConnectionError, e
+    rescue NetClient::Exception => e
+      original_exception = e.original_exception
+      log("#{original_exception.class.name} #{original_exception.message}")
+      raise_with_params(params, original_exception: original_exception)
     end
 
-    def log_rest_client_exception(exception)
+    def log_response(response)
       log_message =
         <<-LOG
-        RestClient exception
-          Class: #{exception.class}
-          Message: #{exception.message}
-          HTTP Code: #{exception.http_code}
-          HTTP Body: #{exception.http_body}
-          HTTP headers: #{exception.http_headers}
+          HTTP Code: #{response.code}
+          HTTP Body: #{response.body}
       LOG
 
       log(log_message)
     end
 
-    def raise_with_params(e, params)
-      result = MyTargetApi::RequestError.new(e, params)
+    def raise_with_params(params, response:, original_exception: nil)
+      result = MyTargetApi::RequestError.new(params,
+                                             response: response,
+                                             original_exception: original_exception)
       result.set_backtrace(caller)
       raise result
     end

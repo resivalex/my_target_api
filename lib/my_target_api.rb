@@ -10,6 +10,7 @@ class MyTargetApi
 
   autoload :ConnectionError, 'my_target_api/connection_error'
   autoload :RequestError, 'my_target_api/request_error'
+  autoload :NetClient, 'my_target_api/net_client'
 
   def initialize(access_token, options = {})
     @access_token = access_token
