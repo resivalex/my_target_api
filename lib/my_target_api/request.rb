@@ -93,7 +93,7 @@ class MyTargetApi
       response = yield
       if response.code >= 400
         log_response(response)
-        raise_with_params(params, response: response.body)
+        raise_with_params(params, response: response)
       end
       log(response.to_s)
       response
@@ -104,13 +104,7 @@ class MyTargetApi
     end
 
     def log_response(response)
-      log_message =
-        <<-LOG
-          HTTP Code: #{response.code}
-          HTTP Body: #{response.body}
-      LOG
-
-      log(log_message)
+      log("HTTP Code: #{response.code}\nHTTP Body: #{response.body}")
     end
 
     def raise_with_params(params, response:, original_exception: nil)

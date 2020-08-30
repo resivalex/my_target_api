@@ -89,7 +89,9 @@ describe MyTargetApi::Request do
         .to_return(body: 'Unknown resource', status: 404)
 
       expect { subject.get('https://target.my.com/api/v1/wrong_path.json') }
-        .to raise_error(MyTargetApi::RequestError, 'Unknown resource')
+        .to raise_error(MyTargetApi::RequestError,
+                        '404: Unknown resource. Inspect #params, #response and #original_exception'\
+                        ' for more details')
     end
   end
 
@@ -122,13 +124,14 @@ describe MyTargetApi::Request do
       )
 
       expect { request.get('https://target.my.com/api/v1/request.json') }
-        .to raise_error(MyTargetApi::RequestError, 'Unknown resource')
+        .to raise_error(MyTargetApi::RequestError,
+                        '404: Unknown resource. Inspect #params, #response and #original_exception'\
+                        ' for more details')
 
       expect(logger).to(have_received(:<<).with("method: Request#get\n"\
         "url: https://target.my.com/api/v1/request.json\n"\
         'params: {}'))
-      expect(logger).to(have_received(:<<).with("          HTTP Code: 404\n"\
-                                                "          HTTP Body: Unknown resource\n"))
+      expect(logger).to(have_received(:<<).with("HTTP Code: 404\nHTTP Body: Unknown resource"))
     end
   end
 end

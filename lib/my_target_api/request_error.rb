@@ -4,26 +4,20 @@ class MyTargetApi
   # Error for request
   class RequestError < StandardError
 
-    attr_reader :original_exception
     attr_reader :params
+    attr_reader :original_exception
+    attr_reader :response
 
     def initialize(params, original_exception: nil, response: nil)
       @params = params
+      @response = response
       @original_exception = original_exception
-      super(build_message(response))
-    end
 
-    private
+      message =
+        (response ? "#{response.code}: #{response.body}. " : '') +
+        'Inspect #params, #response and #original_exception for more details'
 
-    def build_message(response)
-      body = JSON.parse response
-      if body['error']
-        "#{body['error']} : #{body['error_description']}"
-      else
-        body.map { |field, error| "#{field}: #{error}" }.join(', ')
-      end
-    rescue StandardError
-      response
+      super(message)
     end
 
   end
