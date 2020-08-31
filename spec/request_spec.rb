@@ -115,7 +115,10 @@ describe MyTargetApi::Request do
 
     it 'pass parameters by url in get' do
       logger = double('Logger double', '<<': nil)
-      request = MyTargetApi::Request.new(logger: logger)
+      options = { logger: logger }
+      request = MyTargetApi::LogRequestParametersDecorator.new(
+        MyTargetApi::Request.new(options), options
+      )
       allow(MyTargetApi::NetClient).to(
         receive(:get).and_return(double(code: 200,
                                         body: 'response body',
@@ -137,7 +140,10 @@ describe MyTargetApi::Request do
 
     it '404' do
       logger = double('Logger double', '<<': nil)
-      request = MyTargetApi::Request.new(logger: logger)
+      options = { logger: logger }
+      request = MyTargetApi::LogRequestParametersDecorator.new(
+        MyTargetApi::Request.new(options), options
+      )
       allow(MyTargetApi::NetClient).to(
         receive(:get).and_return(
           double(

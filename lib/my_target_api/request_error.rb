@@ -4,9 +4,7 @@ class MyTargetApi
   # Error for request
   class RequestError < StandardError
 
-    attr_reader :params
-    attr_reader :original_exception
-    attr_reader :response
+    attr_reader :params, :original_exception, :response
 
     def initialize(params:, original_exception: nil, response: nil)
       @params = params
@@ -14,7 +12,7 @@ class MyTargetApi
       @original_exception = original_exception
 
       message =
-        (response ? "#{response.code}: #{response.body}. " : '') +
+        "#{(response ? "#{response.code}: #{response.body}. " : '')}"\
         'Inspect #params, #response and #original_exception for more details'
 
       super(message)

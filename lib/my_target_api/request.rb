@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'json'
+require_relative './response_formatter'
+require_relative './net_client'
 
 class MyTargetApi
   # Requests
@@ -11,8 +13,6 @@ class MyTargetApi
     end
 
     def get(url, params = {})
-      log_hash(method: 'Request#get', url: url, params: params)
-
       response = with_exception_handling(params) do
         NetClient.get(url, headers.merge(query(params)))
       end
@@ -21,8 +21,6 @@ class MyTargetApi
     end
 
     def post(url, params = {})
-      log_hash(method: 'Request#post', url: url, params: params)
-
       response = with_exception_handling(params) do
         NetClient.post(url, body_parameters(params), headers)
       end
@@ -31,8 +29,6 @@ class MyTargetApi
     end
 
     def delete(url, params = {})
-      log_hash(method: 'Request#delete', url: url, params: params)
-
       response = with_exception_handling(params) do
         NetClient.delete(url, headers.merge(query(params)))
       end
@@ -41,8 +37,6 @@ class MyTargetApi
     end
 
     def upload(url, content, params = {})
-      log_hash(method: 'Request#upload', url: url, params: params, content: 'no logging')
-
       response = with_exception_handling(params) do
         NetClient.post(
           url, content, headers.merge(query(params)).merge(content_type: 'application/octet-stream')
@@ -67,9 +61,9 @@ class MyTargetApi
     end
 
     def individual_body_parameters(params)
-      params.map do |name, value|
-        [name, value.is_a?(Array) || value.is_a?(Hash) ? value.to_json : value]
-      end.to_h
+      params.transform_values do |value|
+        value.is_a?(Array) || value.is_a?(Hash) ? value.to_json : value
+      end
     end
 
     def query(params)
@@ -102,13 +96,7 @@ class MyTargetApi
     end
 
     def log_response(response)
-      headers = response.headers.empty? ? ' No headers' : "\n#{headers_to_string(response.headers)}"
-      body = response.body.to_s == '' ? ' No body' : "\n#{response.body}"
-      log(<<~RESPONSE)
-        HTTP Code: #{response.code}
-        HTTP Body:#{body}
-        HTTP Headers:#{headers}
-      RESPONSE
+      log(ResponseFormatter.new(response).format)
     end
 
     def headers_to_string(headers)
@@ -123,12 +111,6 @@ class MyTargetApi
                                              original_exception: original_exception)
       result.set_backtrace(caller)
       raise result
-    end
-
-    def log_hash(hash)
-      log(hash.map do |key, value|
-        "#{key}: #{value.is_a?(String) ? value : value.inspect}"
-      end.join("\n"))
     end
 
     def log(message)

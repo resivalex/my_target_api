@@ -7,10 +7,9 @@ class MyTargetApi
 
   autoload :Resource, 'my_target_api/resource'
   autoload :Request, 'my_target_api/request'
-
-  autoload :ConnectionError, 'my_target_api/connection_error'
   autoload :RequestError, 'my_target_api/request_error'
   autoload :NetClient, 'my_target_api/net_client'
+  autoload :LogRequestParametersDecorator, 'my_target_api/log_request_parameters_decorator'
 
   def initialize(access_token, options = {})
     @access_token = access_token
