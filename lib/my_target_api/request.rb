@@ -39,7 +39,9 @@ class MyTargetApi
     def upload(url, content, params = {})
       response = with_exception_handling(params) do
         NetClient.post(
-          url, content, headers.merge(query(params)).merge(content_type: 'application/octet-stream')
+          url,
+          content,
+          headers.merge(query(params)).merge('Content-Type' => 'application/octet-stream')
         )
       end
 

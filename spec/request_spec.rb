@@ -72,7 +72,7 @@ describe MyTargetApi::Request do
         have_received(:post).with(
           'https://target.my.com/api/v2/search_phrases.json',
           "phrase\nfirst\nsecond",
-          content_type: 'application/octet-stream',
+          'Content-Type' => 'application/octet-stream',
           params: { name: 'list' }
         )
       )
