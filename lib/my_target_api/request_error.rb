@@ -8,7 +8,7 @@ class MyTargetApi
     attr_reader :original_exception
     attr_reader :response
 
-    def initialize(params, original_exception: nil, response: nil)
+    def initialize(params:, original_exception: nil, response: nil)
       @params = params
       @response = response
       @original_exception = original_exception

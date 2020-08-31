@@ -77,10 +77,11 @@ class MyTargetApi
     end
 
     def headers
-      {
-        Authorization: "Bearer #{access_token}",
-        **optional_headers
-      }
+      if access_token
+        optional_headers.merge('Authorization' => "Bearer #{access_token}")
+      else
+        optional_headers
+      end
     end
 
     def process_response(response)
@@ -91,24 +92,33 @@ class MyTargetApi
 
     def with_exception_handling(params)
       response = yield
-      if response.code >= 400
-        log_response(response)
-        raise_with_params(params, response: response)
-      end
-      log(response.to_s)
+      log_response(response)
+      raise_with_params(params: params, response: response) if response.code >= 400
       response
     rescue NetClient::Exception => e
       original_exception = e.original_exception
       log("#{original_exception.class.name} #{original_exception.message}")
-      raise_with_params(params, original_exception: original_exception)
+      raise_with_params(params: params, original_exception: original_exception)
     end
 
     def log_response(response)
-      log("HTTP Code: #{response.code}\nHTTP Body: #{response.body}")
+      headers = response.headers.empty? ? ' No headers' : "\n#{headers_to_string(response.headers)}"
+      body = response.body.to_s == '' ? ' No body' : "\n#{response.body}"
+      log(<<~RESPONSE)
+        HTTP Code: #{response.code}
+        HTTP Body:#{body}
+        HTTP Headers:#{headers}
+      RESPONSE
     end
 
-    def raise_with_params(params, response:, original_exception: nil)
-      result = MyTargetApi::RequestError.new(params,
+    def headers_to_string(headers)
+      headers.map do |name, value|
+        "#{name}: #{value}"
+      end.join("\n")
+    end
+
+    def raise_with_params(params:, response: nil, original_exception: nil)
+      result = MyTargetApi::RequestError.new(params: params,
                                              response: response,
                                              original_exception: original_exception)
       result.set_backtrace(caller)

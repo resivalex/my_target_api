@@ -57,6 +57,17 @@ describe MyTargetApi::NetClient do
       ).to eq('abc')
     end
 
+    it 'Headers' do
+      stub_request(:get, 'https://api.com?p=3')
+        .to_return(body: 'body', headers: { 'app-version' => '344354325' })
+
+      result = MyTargetApi::NetClient.get('https://api.com', params: { p: 3 })
+
+      expect(result.body).to eq('body')
+      expect(result.code).to eq(200)
+      expect(result.headers).to eq('App-Version' => '344354325')
+    end
+
     it '404' do
       stub_request(:get, 'https://api.com').to_return(body: 'not found', status: 404)
 

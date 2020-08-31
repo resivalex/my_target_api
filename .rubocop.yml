@@ -10,7 +10,7 @@ Layout/EmptyLinesAroundModuleBody:
 Style/StringLiterals:
   EnforcedStyle: single_quotes
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: false
 
 Metrics/LineLength:

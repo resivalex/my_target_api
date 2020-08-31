@@ -7,7 +7,7 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 1.2.6'
+gem 'my_target_api', '~> 2.0.0'
 ```
 
 Or install from command line:
@@ -97,11 +97,11 @@ def read_active_campaigns
 
   campaigns_resource.read(status: 'active')
 
-rescue MyTargetApi::RequestError, MyTargetApi::ConnectionError => e
+rescue MyTargetApi::RequestError => e
 
-  puts e.message, e.backtrace
+  puts e.message, e.params, e.response, e.backtrace
   # You can access the original exception
-  puts e.original_exception.message, e.original_exception.backtrace
+  puts e.original_exception&.message, e.original_exception&.backtrace
 
 end
 ```
@@ -109,7 +109,6 @@ end
  Name | Description
 ---|---
  `MyTargetApi::RequestError` | Request didn't succeed
- `MyTargetApi::ConnectionError` | Connection didn't succeed
 
 ## Testing
 
