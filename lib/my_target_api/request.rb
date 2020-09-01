@@ -41,7 +41,7 @@ class MyTargetApi
         NetClient.post(
           url,
           content,
-          headers.merge(query(params)).merge('Content-Type' => 'application/octet-stream')
+          { 'Content-Type' => 'application/octet-stream' }.merge(headers).merge(query(params))
         )
       end
 
