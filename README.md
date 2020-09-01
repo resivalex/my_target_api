@@ -7,7 +7,7 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 2.0.0'
+gem 'my_target_api', '~> 2.0.1'
 ```
 
 Or install from command line:
