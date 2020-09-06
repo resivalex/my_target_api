@@ -45,12 +45,11 @@ class MyTargetApi
 
   def request_object
     @_request_object ||= begin
-      request_options = {
-        logger: options[:logger],
-        access_token: access_token,
-        headers: options[:headers]
-      }
-      LogRequestParametersDecorator.new(Request.new(request_options), request_options)
+      logger = options[:logger]
+      request = Request.new(logger: logger,
+                            access_token: access_token,
+                            headers: options[:headers] || {})
+      LogRequestParametersDecorator.new(request, { logger: logger }.compact)
     end
   end
 

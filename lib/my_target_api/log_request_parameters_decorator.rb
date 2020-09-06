@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 require 'json'
-require_relative './response_formatter'
-require_relative './net_client'
+require_relative './nil_logger'
 
 class MyTargetApi
   # Requests
   class LogRequestParametersDecorator
 
-    def initialize(origin, options = {})
+    def initialize(origin, logger: NilLogger)
       @origin = origin
-      @options = options
+      @logger = logger
     end
 
     def get(url, params = {})
@@ -39,16 +38,16 @@ class MyTargetApi
 
     private
 
-    attr_reader :origin, :options
+    attr_reader :origin, :logger
 
     def log_hash(hash)
-      log(hash.map do |key, value|
-        "#{key}: #{value.is_a?(String) ? value : value.inspect}"
-      end.join("\n"))
+      logger << inspect_hash(hash)
     end
 
-    def log(message)
-      options[:logger] << message if options[:logger]
+    def inspect_hash(hash)
+      hash.map do |key, value|
+        "#{key}: #{value.is_a?(String) ? value : value.inspect}"
+      end.join("\n")
     end
 
   end

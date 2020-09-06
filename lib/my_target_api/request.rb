@@ -3,18 +3,21 @@
 require 'json'
 require_relative './response_formatter'
 require_relative './net_client'
+require_relative './nil_logger'
 
 class MyTargetApi
   # Requests
   class Request
 
-    def initialize(options = {})
-      @options = options
+    def initialize(access_token: nil, headers: {}, logger: NilLogger)
+      @access_token = access_token
+      @headers = headers
+      @logger = logger
     end
 
     def get(url, params = {})
       response = with_exception_handling(params) do
-        NetClient.get(url, headers.merge(query(params)))
+        NetClient.get(url, final_headers.merge(query(params)))
       end
 
       process_response(response)
@@ -22,7 +25,7 @@ class MyTargetApi
 
     def post(url, params = {})
       response = with_exception_handling(params) do
-        NetClient.post(url, body_parameters(params), headers)
+        NetClient.post(url, body_parameters(params), final_headers)
       end
 
       process_response(response)
@@ -30,7 +33,7 @@ class MyTargetApi
 
     def delete(url, params = {})
       response = with_exception_handling(params) do
-        NetClient.delete(url, headers.merge(query(params)))
+        NetClient.delete(url, final_headers.merge(query(params)))
       end
 
       process_response(response)
@@ -41,7 +44,7 @@ class MyTargetApi
         NetClient.post(
           url,
           content,
-          { 'Content-Type' => 'application/octet-stream' }.merge(headers).merge(query(params))
+          { 'Content-Type' => 'application/octet-stream' }.merge(final_headers).merge(query(params))
         )
       end
 
@@ -50,7 +53,7 @@ class MyTargetApi
 
     private
 
-    attr_reader :options
+    attr_reader :access_token, :headers, :logger
 
     def body_parameters(params)
       result_params = params.dup
@@ -72,11 +75,11 @@ class MyTargetApi
       { params: params }
     end
 
-    def headers
+    def final_headers
       if access_token
-        optional_headers.merge('Authorization' => "Bearer #{access_token}")
+        headers.merge('Authorization' => "Bearer #{access_token}")
       else
-        optional_headers
+        headers
       end
     end
 
@@ -93,18 +96,12 @@ class MyTargetApi
       response
     rescue NetClient::Exception => e
       original_exception = e.original_exception
-      log("#{original_exception.class.name} #{original_exception.message}")
+      logger << "#{original_exception.class.name} #{original_exception.message}"
       raise_with_params(params: params, original_exception: original_exception)
     end
 
     def log_response(response)
-      log(ResponseFormatter.new(response).format)
-    end
-
-    def headers_to_string(headers)
-      headers.map do |name, value|
-        "#{name}: #{value}"
-      end.join("\n")
+      logger << ResponseFormatter.new(response).format
     end
 
     def raise_with_params(params:, response: nil, original_exception: nil)
@@ -113,18 +110,6 @@ class MyTargetApi
                                              original_exception: original_exception)
       result.set_backtrace(caller)
       raise result
-    end
-
-    def log(message)
-      options[:logger] << message if options[:logger]
-    end
-
-    def access_token
-      options[:access_token]
-    end
-
-    def optional_headers
-      options[:headers] || {}
     end
 
   end

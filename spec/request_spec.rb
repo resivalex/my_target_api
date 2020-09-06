@@ -117,7 +117,7 @@ describe MyTargetApi::Request do
       logger = double('Logger double', '<<': nil)
       options = { logger: logger }
       request = MyTargetApi::LogRequestParametersDecorator.new(
-        MyTargetApi::Request.new(options), options
+        MyTargetApi::Request.new(options), logger: logger
       )
       allow(MyTargetApi::NetClient).to(
         receive(:get).and_return(double(code: 200,
@@ -142,7 +142,7 @@ describe MyTargetApi::Request do
       logger = double('Logger double', '<<': nil)
       options = { logger: logger }
       request = MyTargetApi::LogRequestParametersDecorator.new(
-        MyTargetApi::Request.new(options), options
+        MyTargetApi::Request.new(options), logger: logger
       )
       allow(MyTargetApi::NetClient).to(
         receive(:get).and_return(
