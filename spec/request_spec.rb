@@ -127,9 +127,10 @@ describe MyTargetApi::Request do
 
       request.get('https://target.my.com/api/v1/request.json')
 
-      expect(logger).to(have_received(:<<).with("method: Request#get\n"\
-        "url: https://target.my.com/api/v1/request.json\n"\
-        'params: {}'))
+      expect(logger).to(
+        have_received(:<<)
+          .with("GET https://target.my.com/api/v1/request.json\nParams: No params\n")
+      )
       expect(logger).to(have_received(:<<).with(<<~LOG))
         HTTP Code: 200
         HTTP Body:
@@ -159,9 +160,10 @@ describe MyTargetApi::Request do
                         '404: Unknown resource. Inspect #params, #response and #original_exception'\
                         ' for more details')
 
-      expect(logger).to(have_received(:<<).with("method: Request#get\n"\
-        "url: https://target.my.com/api/v1/request.json\n"\
-        'params: {}'))
+      expect(logger).to(
+        have_received(:<<)
+          .with("GET https://target.my.com/api/v1/request.json\nParams: No params\n")
+      )
       expect(logger).to(have_received(:<<).with(<<~LOG))
         HTTP Code: 404
         HTTP Body:
