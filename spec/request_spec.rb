@@ -21,7 +21,7 @@ describe MyTargetApi::Request do
       result = subject.post('https://target.my.com/api/v1/campaigns.json')
 
       expect(MyTargetApi::NetClient).to(
-        have_received(:post).with('https://target.my.com/api/v1/campaigns.json', '{}', {})
+        have_received(:post).with('https://target.my.com/api/v1/campaigns.json', {}, {})
       )
 
       expect(result).to eq('name' => 'Campaign 1')

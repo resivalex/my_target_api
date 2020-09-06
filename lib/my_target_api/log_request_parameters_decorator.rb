@@ -34,7 +34,6 @@ class MyTargetApi
 
     def upload(url, content, params = {}, headers = {})
       log_request(method: 'POST', url: url, params: params, headers: headers, content: content)
-      log_content(content)
 
       origin.upload(url, content, params, headers)
     end
@@ -68,7 +67,7 @@ class MyTargetApi
             #{content[0...CONTENT_OUTPUT_LIMIT]}
           LOG
         else
-          "content\n"
+          "#{content}"
         end
       result
     end

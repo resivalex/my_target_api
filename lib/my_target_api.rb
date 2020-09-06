@@ -11,6 +11,7 @@ class MyTargetApi
   autoload :NetClient, 'my_target_api/net_client'
   autoload :LogRequestParametersDecorator, 'my_target_api/log_request_parameters_decorator'
   autoload :AddAccessTokenToRequestDecorator, 'my_target_api/add_access_token_to_request_decorator'
+  autoload :PreparePostParamsDecorator, 'my_target_api/prepare_post_params_decorator'
 
   def initialize(access_token, options = {})
     @access_token = access_token
@@ -49,7 +50,8 @@ class MyTargetApi
       logger = options[:logger]
       request = Request.new(logger: logger)
       request = LogRequestParametersDecorator.new(request, { logger: logger }.compact)
-      AddAccessTokenToRequestDecorator.new(request, { access_token: access_token })
+      request = AddAccessTokenToRequestDecorator.new(request, { access_token: access_token })
+      PreparePostParamsDecorator.new(request)
     end
   end
 

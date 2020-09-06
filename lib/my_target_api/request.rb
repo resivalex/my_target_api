@@ -23,7 +23,7 @@ class MyTargetApi
 
     def post(url, params = {}, headers = {})
       response = with_exception_handling(params) do
-        NetClient.post(url, body_parameters(params), headers)
+        NetClient.post(url, params, headers)
       end
 
       process_response(response)
@@ -54,22 +54,6 @@ class MyTargetApi
     private
 
     attr_reader :logger
-
-    def body_parameters(params)
-      result_params = params.dup
-
-      if result_params.values.any? { |param| param.is_a? IO } || result_params[:grant_type]
-        individual_body_parameters(result_params)
-      else
-        result_params.to_json
-      end
-    end
-
-    def individual_body_parameters(params)
-      params.transform_values do |value|
-        value.is_a?(Array) || value.is_a?(Hash) ? value.to_json : value
-      end
-    end
 
     def query(params)
       { params: params }
