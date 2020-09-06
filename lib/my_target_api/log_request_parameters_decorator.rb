@@ -14,43 +14,45 @@ class MyTargetApi
       @logger = logger
     end
 
-    def get(url, params = {})
-      log_request(method: 'GET', url: url, params: params)
+    def get(url, params = {}, headers = {})
+      log_request(method: 'GET', url: url, params: params, headers: headers)
 
-      origin.get(url, params)
+      origin.get(url, params, headers)
     end
 
-    def post(url, params = {})
-      log_request(method: 'POST', url: url, params: params)
+    def post(url, params = {}, headers = {})
+      log_request(method: 'POST', url: url, params: params, headers: headers)
 
-      origin.post(url, params)
+      origin.post(url, params, headers)
     end
 
-    def delete(url, params = {})
-      log_request(method: 'DELETE', url: url, params: params)
+    def delete(url, params = {}, headers = {})
+      log_request(method: 'DELETE', url: url, params: params, headers: headers)
 
-      origin.delete(url, params)
+      origin.delete(url, params, headers)
     end
 
-    def upload(url, content, params = {})
-      log_request(method: 'POST', url: url, params: params, content: content)
+    def upload(url, content, params = {}, headers = {})
+      log_request(method: 'POST', url: url, params: params, headers: headers, content: content)
       log_content(content)
 
-      origin.upload(url, content, params)
+      origin.upload(url, content, params, headers)
     end
 
     private
 
     attr_reader :origin, :logger
 
-    def log_request(method:, url:, params:, content: nil)
+    def log_request(method:, url:, params:, headers:, content: nil)
       logger <<
-        "#{inspect_request(method: method, url: url, params: params)}#{inspect_content(content)}"
+        "#{inspect_request(method: method, url: url, params: params, headers: headers)}"\
+        "#{inspect_content(content)}"
     end
 
-    def inspect_request(method:, url:, params:)
+    def inspect_request(method:, url:, params:, headers:)
       <<~LOG
         #{method} #{url}
+        #{inspect_headers(headers)}
         #{inspect_params(params)}
       LOG
     end
@@ -69,6 +71,14 @@ class MyTargetApi
           "content\n"
         end
       result
+    end
+
+    def inspect_headers(params)
+      if params.empty?
+        'Headers: No headers'
+      else
+        "Headers:\n#{params.map { |name, value| "#{name}: #{value}" }.join("\n")}"
+      end
     end
 
     def inspect_params(params)

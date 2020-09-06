@@ -9,42 +9,42 @@ class MyTargetApi
   # Requests
   class Request
 
-    def initialize(access_token: nil, headers: {}, logger: NilLogger)
-      @access_token = access_token
-      @headers = headers
+    def initialize(logger: NilLogger)
       @logger = logger
     end
 
-    def get(url, params = {})
+    def get(url, params = {}, headers = {})
       response = with_exception_handling(params) do
-        NetClient.get(url, final_headers.merge(query(params)))
+        NetClient.get(url, headers.merge(query(params)))
       end
 
       process_response(response)
     end
 
-    def post(url, params = {})
+    def post(url, params = {}, headers = {})
       response = with_exception_handling(params) do
-        NetClient.post(url, body_parameters(params), final_headers)
+        NetClient.post(url, body_parameters(params), headers)
       end
 
       process_response(response)
     end
 
-    def delete(url, params = {})
+    def delete(url, params = {}, headers = {})
       response = with_exception_handling(params) do
-        NetClient.delete(url, final_headers.merge(query(params)))
+        NetClient.delete(url, headers.merge(query(params)))
       end
 
       process_response(response)
     end
 
-    def upload(url, content, params = {})
+    def upload(url, content, params = {}, headers = {})
       response = with_exception_handling(params) do
         NetClient.post(
           url,
           content,
-          { 'Content-Type' => 'application/octet-stream' }.merge(final_headers).merge(query(params))
+          { 'Content-Type' => 'application/octet-stream' }
+            .merge(headers)
+            .merge(query(params))
         )
       end
 
@@ -53,7 +53,7 @@ class MyTargetApi
 
     private
 
-    attr_reader :access_token, :headers, :logger
+    attr_reader :logger
 
     def body_parameters(params)
       result_params = params.dup
@@ -73,14 +73,6 @@ class MyTargetApi
 
     def query(params)
       { params: params }
-    end
-
-    def final_headers
-      if access_token
-        headers.merge('Authorization' => "Bearer #{access_token}")
-      else
-        headers
-      end
     end
 
     def process_response(response)

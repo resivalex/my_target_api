@@ -96,7 +96,10 @@ describe MyTargetApi::Request do
                                         headers: {}))
       )
 
-      request = MyTargetApi::Request.new(access_token: 'my_target_token')
+      request = MyTargetApi::AddAccessTokenToRequestDecorator.new(
+        MyTargetApi::Request.new,
+        access_token: 'my_target_token'
+      )
       request.get('https://target.my.com/api/v1/some_path.json')
 
       expect(MyTargetApi::NetClient).to(
@@ -129,7 +132,11 @@ describe MyTargetApi::Request do
 
       expect(logger).to(
         have_received(:<<)
-          .with("GET https://target.my.com/api/v1/request.json\nParams: No params\n")
+          .with(<<~LOG)
+            GET https://target.my.com/api/v1/request.json
+            Headers: No headers
+            Params: No params
+          LOG
       )
       expect(logger).to(have_received(:<<).with(<<~LOG))
         HTTP Code: 200
@@ -160,10 +167,12 @@ describe MyTargetApi::Request do
                         '404: Unknown resource. Inspect #params, #response and #original_exception'\
                         ' for more details')
 
-      expect(logger).to(
-        have_received(:<<)
-          .with("GET https://target.my.com/api/v1/request.json\nParams: No params\n")
-      )
+      expect(logger).to(have_received(:<<).with(<<~LOG))
+        GET https://target.my.com/api/v1/request.json
+        Headers: No headers
+        Params: No params
+      LOG
+
       expect(logger).to(have_received(:<<).with(<<~LOG))
         HTTP Code: 404
         HTTP Body:

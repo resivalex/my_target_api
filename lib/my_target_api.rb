@@ -10,6 +10,7 @@ class MyTargetApi
   autoload :RequestError, 'my_target_api/request_error'
   autoload :NetClient, 'my_target_api/net_client'
   autoload :LogRequestParametersDecorator, 'my_target_api/log_request_parameters_decorator'
+  autoload :AddAccessTokenToRequestDecorator, 'my_target_api/add_access_token_to_request_decorator'
 
   def initialize(access_token, options = {})
     @access_token = access_token
@@ -24,19 +25,19 @@ class MyTargetApi
   end
 
   def get_request(url, params)
-    request_object.get(url, params)
+    request_object.get(url, params, headers)
   end
 
   def post_request(url, params)
-    request_object.post(url, params)
+    request_object.post(url, params, headers)
   end
 
   def delete_request(url, params)
-    request_object.delete(url, params)
+    request_object.delete(url, params, headers)
   end
 
   def upload_request(url, content, params)
-    request_object.upload(url, content, params)
+    request_object.upload(url, content, params, headers)
   end
 
   private
@@ -46,11 +47,14 @@ class MyTargetApi
   def request_object
     @_request_object ||= begin
       logger = options[:logger]
-      request = Request.new(logger: logger,
-                            access_token: access_token,
-                            headers: options[:headers] || {})
-      LogRequestParametersDecorator.new(request, { logger: logger }.compact)
+      request = Request.new(logger: logger)
+      request = LogRequestParametersDecorator.new(request, { logger: logger }.compact)
+      AddAccessTokenToRequestDecorator.new(request, { access_token: access_token })
     end
+  end
+
+  def headers
+    options[:headers] || {}
   end
 
 end
