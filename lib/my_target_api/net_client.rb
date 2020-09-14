@@ -37,19 +37,19 @@ class MyTargetApi
 
       def get(*args)
         RestClient.get(*args) { |response, &block| process_response(response, &block) }
-      rescue StandardError => e
+      rescue RestClient::Exception => e
         raise(Exception.new(e, e.message).tap { e.set_backtrace(caller) })
       end
 
       def post(*args)
         RestClient.post(*args) { |response, &block| process_response(response, &block) }
-      rescue StandardError => e
+      rescue RestClient::Exception => e
         raise(Exception.new(e, e.message).tap { e.set_backtrace(caller) })
       end
 
       def delete(*args)
         RestClient.delete(*args) { |response, &block| process_response(response, &block) }
-      rescue StandardError => e
+      rescue RestClient::Exception => e
         raise(Exception.new(e, e.message).tap { e.set_backtrace(caller) })
       end
 
@@ -64,7 +64,7 @@ class MyTargetApi
             response.return!(&block)
           end
         Response.new(result.body, result.code, format_headers(result.headers))
-      rescue StandardError => e
+      rescue RestClient::Exception => e
         raise(Exception.new(e, e.message).tap { e.set_backtrace(caller) })
       end
 

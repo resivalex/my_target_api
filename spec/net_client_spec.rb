@@ -47,6 +47,13 @@ describe MyTargetApi::NetClient do
       ).body).to eq('{}')
     end
 
+    it "doesn't catch not RestClient exceptions" do
+      test_exception = Class.new(StandardError)
+      allow(RestClient).to receive(:get).and_raise(test_exception)
+
+      expect { MyTargetApi::NetClient.get('https://api.com') }.to raise_error(test_exception)
+    end
+
     it ':content_type' do
       stub_request(:get, 'https://api.com')
         .with(headers: { 'Content-Type' => 'application/octet-stream' })
