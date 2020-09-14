@@ -67,7 +67,7 @@ class MyTargetApi
             #{content[0...CONTENT_OUTPUT_LIMIT]}
           LOG
         else
-          "#{content}"
+          content
         end
       result
     end
