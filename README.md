@@ -99,7 +99,7 @@ def read_active_campaigns
 
 rescue MyTargetApi::RequestError => e
 
-  puts e.message, e.params, e.response, e.backtrace
+  puts e.message, e.method, e.url, e.params, e.response, e.backtrace
   # You can access the original exception
   puts e.original_exception&.message, e.original_exception&.backtrace
 

@@ -4,18 +4,16 @@ class MyTargetApi
   # Error for request
   class RequestError < StandardError
 
-    attr_reader :params, :original_exception, :response
+    attr_reader :method, :url, :params, :original_exception, :response
 
-    def initialize(params:, original_exception: nil, response: nil)
+    def initialize(method:, url:, params:, original_exception: nil, response: nil)
+      @method = method
+      @url = url
       @params = params
       @response = response
       @original_exception = original_exception
 
-      message =
-        "#{(response ? "#{response.code}: #{response.body}. " : '')}"\
-        'Inspect #params, #response and #original_exception for more details'
-
-      super(message)
+      super(response ? "#{response.code}: #{response.body}" : 'No response')
     end
 
   end
