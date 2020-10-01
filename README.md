@@ -7,7 +7,7 @@
 Add this line to your application's Gemfile:
 
 ```
-gem 'my_target_api', '~> 2.0.5'
+gem 'my_target_api', '~> 2.0.9'
 ```
 
 Or install from command line:
@@ -99,7 +99,7 @@ def read_active_campaigns
 
 rescue MyTargetApi::RequestError => e
 
-  puts e.message, e.method, e.url, e.params, e.response, e.backtrace
+  puts e.message, e.method, e.url, e.params, e.request_body, e.response, e.backtrace
   # You can access the original exception
   puts e.original_exception&.message, e.original_exception&.backtrace
 
